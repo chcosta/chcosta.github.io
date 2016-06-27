@@ -37,7 +37,7 @@
 
   <head>
     <meta charset="utf-8">
-    <title>D3 Test</title>
+    <title>Package dependency graph</title>
       <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
       <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
       <script>
@@ -47,7 +47,8 @@
       var dataNodes = []; /* represents a package and its dependencies */
       var dataLinks = []; /* represents the links between packages */
       var diameter = 2000; /* diameter of circular graph */
-
+      var nodesFile = "core-setup_coreclr_corefx_projectk-tfs_wcf.nodes2.txt";
+      
       /* return a color based on an index */
       function getRepoColor(name) {
         var repoColor = "#fff";
@@ -87,7 +88,6 @@
           });
       };
 
-      // 
       function GetNodeIndex(nodes, name)
       {
           var index = 0;
@@ -142,7 +142,6 @@
               if (sName !== undefined) {
                   var sRepo = tokens[1];
                   var tName = tokens[2];
-                  //              var tVersion = tokens[3];
 
                   var cs = [];
                   lines.forEach(function (d) {
@@ -150,8 +149,6 @@
                       var csName = ctokens[0];
                       var csRepo = ctokens[1];
                       var ctName = ctokens[2];
-                      //                  var ctVersion = ctokens[3];
-                      //                  var ctRepo = ctokens[4];
                       if (csName === sName) {
                           if (cs.indexOf(ctName) == -1) {
                               cs.push(ctName);
@@ -189,11 +186,6 @@
                           repos.push(sRepo);
                       }
                   }
-                  //              if (repos.indexOf(tRepo) == -1) {
-                  //                  if (tRepo !== undefined) {
-                  //                      repos.push(tRepo);
-                  //                  }
-                  //              }
               }
           });
       }
@@ -206,7 +198,6 @@
             .attr("height", diameter)
             .append("g")
             .attr("transform", "translate(" + (diameter / 2) + "," + diameter / 2 + ")");
-
 
           // Create links between nodes
           var path = svg.selectAll(".node")
@@ -231,7 +222,7 @@
               .attr("cy", function (d) { return d.ny; })
               .attr("repo", function (d) { return d.repo; })
               .attr("name", function (d) { return d.name; })
-              .on("mouseover", nodeMouseover);
+              .on("click", nodeClick);
           // Add text for node display
           node.append("text")
               .attr("transform", function (d) { return "translate(" + d.nx + "," + d.ny + ")rotate(" + (d.angle) + ")translate(15,0)"; })
@@ -283,7 +274,7 @@
             .text(function (d) { return d; });
 
           // handle node mouseover
-          function nodeMouseover(d) {
+          function nodeClick(d) {
               svg.selectAll(".node circle").classed("active", function (p) { return p.name === d.name; });
               //d3.select(this).classed("active", true);
               svg.selectAll(".path line").classed("active", function (p) { return p.source === d.name; });
@@ -327,7 +318,7 @@
 
       // Main function
       function init() {
-          d3.text("core-setup_coreclr_corefx_projectk-tfs_wcf.nodes2.txt",
+          d3.text(nodesfile,
           function (data) {
               // Parse data from txt file
               ParseData(data);
@@ -346,6 +337,7 @@
     </script>
   </head>
 <body>
+    Source code is available at <a href="https://github.com/chcosta/chcosta.github.io">https://github.com/chcosta/chcosta.github.io</a><br />
     <table style="table-layout:fixed">
         <tr>
             <td width="400" id="info">
@@ -355,14 +347,12 @@
                         </td>
                     </tr>
                     <tr id="dependencies">
-
                     </tr>
                 </table>
             </td>
             <td id="chart"></td>
             <td id="legend"></td>
         </tr>
-
     </table>
 </body>
 </html>
